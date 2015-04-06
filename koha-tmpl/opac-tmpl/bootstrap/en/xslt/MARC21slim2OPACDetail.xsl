@@ -171,6 +171,22 @@
             </xsl:when>
         </xsl:choose>
 
+            <!-- 090 feiled addeed by EV -->
+            <xsl:if test="marc:datafield[@tag=090]">
+                <span class="results_summary cnseries"><span class="label">Call Number: </span>
+                    <xsl:for-each select="marc:datafield[@tag=090]">
+                        <xsl:call-template name="chopPunctuation">
+                            <xsl:with-param name="chopString">
+                                <xsl:call-template name="subfieldSelect">
+                                    <xsl:with-param name="codes">ab</xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:choose><xsl:when test="position()=last()"><xsl:text>.</xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
+                    </xsl:for-each>
+                </span>
+            </xsl:if>
+            
    <xsl:if test="$DisplayOPACiconsXSLT!='0'">
         <xsl:if test="$materialTypeCode!=''">
         <span class="results_summary type"><span class="label">Material type: </span>

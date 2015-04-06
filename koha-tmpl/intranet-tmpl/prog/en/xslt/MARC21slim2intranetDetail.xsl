@@ -143,6 +143,22 @@
         <xsl:call-template name="showAuthor"><xsl:with-param name="authorfield" select="marc:datafield[@tag=100 or @tag=110 or @tag=111]"/><xsl:with-param name="UseAuthoritiesForTracings" select="$UseAuthoritiesForTracings"/></xsl:call-template>
         <xsl:call-template name="showAuthor"><xsl:with-param name="authorfield" select="marc:datafield[@tag=700 or @tag=710 or @tag=711]"/><xsl:with-param name="UseAuthoritiesForTracings" select="$UseAuthoritiesForTracings"/></xsl:call-template>
 
+        <!-- 090 call number data added EV -->
+        <xsl:if test="marc:datafield[@tag=090]">
+            <span class="results_summary series"><span class="label">Call Number: </span>
+                <xsl:for-each select="marc:datafield[@tag=090]">
+                    <xsl:call-template name="chopPunctuation">
+                        <xsl:with-param name="chopString">
+                            <xsl:call-template name="subfieldSelect">
+                                <xsl:with-param name="codes">ab</xsl:with-param>
+                            </xsl:call-template>
+                        </xsl:with-param>
+                    </xsl:call-template>
+                    <xsl:choose><xsl:when test="position()=last()"><xsl:text>.</xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
+                </xsl:for-each>
+            </span>
+        </xsl:if>
+        
     <xsl:if test="$DisplayIconsXSLT!='0' and $materialTypeCode!=''">
         <span class="results_summary type"><span class="label">Material type: </span>
         <xsl:element name="img"><xsl:attribute name="src">/intranet-tmpl/prog/img/famfamfam/<xsl:value-of select="$materialTypeCode"/>.png</xsl:attribute><xsl:attribute name="alt"></xsl:attribute></xsl:element>
