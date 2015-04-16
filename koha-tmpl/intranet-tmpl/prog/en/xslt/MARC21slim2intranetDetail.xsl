@@ -540,16 +540,6 @@
         </xsl:for-each>
         </span>
         </xsl:if>
-
-        <!-- #25174 add 500 field -->
-        <xsl:if test="marc:datafield[@tag=500]">
-            <span class="results_summary title_notes"><span class="label">Title notes: </span>
-                <xsl:for-each select="marc:datafield[@tag=500]">
-                    <xsl:value-of select="marc:subfield[@code='a']"/>
-                    <xsl:choose><xsl:when test="position()=last()"><xsl:text>.</xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
-                </xsl:for-each>
-            </span>
-        </xsl:if>
         
         <xsl:if test="marc:datafield[substring(@tag, 1, 1) = '6']">
             <span class="results_summary subjects"><span class="label">Subject(s): </span>
