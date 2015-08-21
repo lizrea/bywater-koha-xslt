@@ -427,7 +427,17 @@
             </xsl:for-each>
           </span>
         </xsl:if>
-
+        <!-- #27512 add OCLC Number-->
+        <xsl:if test="marc:controlfield[@tag=001]">
+            <span class="results_summary oclc">
+                <span class="label">OCLC: </span>
+                <xsl:for-each select="marc:controlfield[@tag=001][starts-with(.,'ocm') or starts-with(.,'ocn')]">
+                    <xsl:apply-templates/>
+                    <xsl:choose><xsl:when test="position()=last()"><xsl:text></xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
+                </xsl:for-each>
+            </span>
+        </xsl:if>
+        
         <xsl:if test="marc:datafield[@tag=013]">
             <span class="results_summary patent_info">
                 <span class="label">Patent information: </span>
