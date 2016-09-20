@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+
+use Modern::Perl;
+use LWP::Simple qw(get);
+use Koha;
+use Koha::Database;
+
+my $rs = Koha::Database->new()->schema()->resultset('Systempreference');
+
+my ($shortname) = split( '-', $ENV{LOGNAME} || $ENV{USERNAME} || $ENV{USER} );
+say "SHORTNAME: $shortname";
+my ( $major, $minor ) = split( '\.', Koha::version() );
+my $version = "v$major.$minor";
+say "VERSION: $version";
+
+my @stylesheets = (
+    {
+        url =>
+"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/intranet-tmpl/prog/en/xslt/MARC21slim2intranetDetail.xsl",
+        filename          => "/var/lib/koha/$shortname/intranet-detail.xsl",
+        system_preference => 'XSLTDetailsDisplay',
+    },
+    {
+        url =>
+"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/intranet-tmpl/prog/en/xslt/MARC21slim2intranetResults.xsl",
+        filename          => "/var/lib/koha/$shortname/intranet-results.xsl",
+        system_preference => 'XSLTResultsDisplay',
+    },
+    {
+        url =>
+"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/opac-tmpl/bootstrap/en/xslt/MARC21slim2OPACDetail.xsl",
+        filename          => "/var/lib/koha/$shortname/opac-detail.xsl",
+        system_preference => 'OPACXSLTDetailsDisplay',
+    },
+    {
+        url =>
+"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/opac-tmpl/bootstrap/en/xslt/MARC21slim2OPACResults.xsl",
+        filename          => "/var/lib/koha/$shortname/opac-results.xsl",
+        system_preference => 'OPACXSLTResultsDisplay',
+    },
+);
+
+my $xslt;
+
+for my $s (@stylesheets) {
+    $xslt = get( $s->{url} );
+    if ($xslt) {
+        open my $fh, ">", $s->{filename} or die("Could not open file. $!");
+        print $fh $xslt;
+        close $fh;
+
+        my $sp = $rs->find( $s->{system_preference} );
+        $sp->value( $s->{filename} );
+        $sp->update();
+    }
+}
