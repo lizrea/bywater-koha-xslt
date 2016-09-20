@@ -2,40 +2,49 @@
 
 use Modern::Perl;
 use LWP::Simple qw(get);
+use Getopt::Long;
 use Koha;
 use Koha::Database;
+
+my $repo =
+  "https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt";
+
+my $confirm;
+my $verbose;
+GetOptions(
+    "c|confirm" => \$confirm,
+    "v|verbose" => \$verbose,
+);
+
+$verbose = 1 unless $confirm;
 
 my $rs = Koha::Database->new()->schema()->resultset('Systempreference');
 
 my ($shortname) = split( '-', $ENV{LOGNAME} || $ENV{USERNAME} || $ENV{USER} );
-say "SHORTNAME: $shortname";
+say "SHORTNAME: $shortname" if $verbose;
 my ( $major, $minor ) = split( '\.', Koha::version() );
 my $version = "v$major.$minor";
-say "VERSION: $version";
+say "VERSION: $version" if $verbose;
 
 my @stylesheets = (
     {
-        url =>
-"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/intranet-tmpl/prog/en/xslt/MARC21slim2intranetDetail.xsl",
-        filename          => "/var/lib/koha/$shortname/intranet-detail.xsl",
+        url               => "$repo/$version/$shortname/koha-tmpl/intranet-tmpl/prog/en/xslt/MARC21slim2intranetDetail.xsl",
+        filename          => "/var/lib/koha/$shortname/$shortname-intranet-detail.xsl",
         system_preference => 'XSLTDetailsDisplay',
     },
     {
-        url =>
-"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/intranet-tmpl/prog/en/xslt/MARC21slim2intranetResults.xsl",
-        filename          => "/var/lib/koha/$shortname/intranet-results.xsl",
+        url               => "$repo/$version/$shortname/koha-tmpl/intranet-tmpl/prog/en/xslt/MARC21slim2intranetResults.xsl",
+        filename          => "/var/lib/koha/$shortname/$shortname-intranet-results.xsl",
         system_preference => 'XSLTResultsDisplay',
     },
     {
-        url =>
-"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/opac-tmpl/bootstrap/en/xslt/MARC21slim2OPACDetail.xsl",
-        filename          => "/var/lib/koha/$shortname/opac-detail.xsl",
+        url               => "$repo/$version/$shortname/koha-tmpl/opac-tmpl/bootstrap/en/xslt/MARC21slim2OPACDetail.xsl",
+        filename          => "/var/lib/koha/$shortname/$shortname-opac-detail.xsl",
         system_preference => 'OPACXSLTDetailsDisplay',
     },
     {
-        url =>
-"https://raw.githubusercontent.com/bywatersolutions/bywater-koha-xslt/$version/$shortname/koha-tmpl/opac-tmpl/bootstrap/en/xslt/MARC21slim2OPACResults.xsl",
-        filename          => "/var/lib/koha/$shortname/opac-results.xsl",
+        url               => "$repo/$version/$shortname/koha-tmpl/opac-tmpl/bootstrap/en/xslt/MARC21slim2OPACResults.xsl",
+        filename          => "/var/lib/koha/$shortname/$shortname-opac-results.xsl",
         system_preference => 'OPACXSLTResultsDisplay',
     },
 );
@@ -43,8 +52,19 @@ my @stylesheets = (
 my $xslt;
 
 for my $s (@stylesheets) {
+    if ($verbose) {
+        say q{};
+        say "URL: $s->{url}";
+        say "FILENAME: $s->{filename}";
+        say "SYSTEM PREF: $s->{system_preference}";
+    }
+
     $xslt = get( $s->{url} );
-    if ($xslt) {
+
+    say "FOUND XSLT FILE" if $xslt && $verbose;
+
+    if ( $confirm && $xslt ) {
+        say "File created!" if $verbose;
         open my $fh, ">", $s->{filename} or die("Could not open file. $!");
         print $fh $xslt;
         close $fh;
@@ -52,5 +72,9 @@ for my $s (@stylesheets) {
         my $sp = $rs->find( $s->{system_preference} );
         $sp->value( $s->{filename} );
         $sp->update();
+        say "System preference updated!" if $verbose;
     }
+
 }
+
+say qq{\n} if $verbose;
