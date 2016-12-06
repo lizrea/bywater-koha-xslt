@@ -13,3 +13,6 @@ If you are not using ByWater's repos ( and you probably aren't ) you'll want to 
 update-xslt-from-github --confirm --verbose
 
 Running without --confirm will run the script in test mode. Verbosity is forced in test mode.
+
+Crontab example:
+@hourly instancename-koha /path/to/koha-xslt-from-github/update-xslt-from-github --confirm
