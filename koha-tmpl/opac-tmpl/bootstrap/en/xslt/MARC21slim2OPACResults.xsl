@@ -578,19 +578,12 @@
             <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8']">
                 <span class="results_summary diss_note">
                     <span class="label">Collection: </span>
-                    <xsl:for-each select="marc:datafield[@tag=952]/marc:subfield[@code='8']">
-                        <xsl:value-of select="."/>                     
-                    </xsl:for-each>
+                        <xsl:value-of select="marc:datafield[@tag=952]/marc:subfield[@code='8'][1]"/>                    
                 </span>                
             </xsl:if>
             <xsl:if test="items:itemcallnumber">
                 <span class="results_summary diss_note">
-                    <span class="LabelCallNumber">Call number: </span><xsl:value-of select="items:itemcallnumber"/>
-                    <span class="label">Call number: </span>
-                    <xsl:for-each select="items:itemcallnumber">
-                        <xsl:value-of select="."/> 
-                        <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>                        
-                    </xsl:for-each>
+                    <span class="LabelCallNumber">Call number: </span><xsl:value-of select="items:itemcallnumber[1]"/>
                 </span>                
             </xsl:if>
         </xsl:if>
