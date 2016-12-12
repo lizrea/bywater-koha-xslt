@@ -579,8 +579,7 @@
                 <span class="results_summary diss_note">
                     <span class="label">Collection: </span>
                     <xsl:for-each select="marc:datafield[@tag=952]/marc:subfield[@code='8']">
-                        <xsl:value-of select="."/>  
-                        <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>                        
+                        <xsl:value-of select="."/>                     
                     </xsl:for-each>
                 </span>                
             </xsl:if>
