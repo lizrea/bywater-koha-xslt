@@ -574,17 +574,24 @@
     </p>
 
         <!-- #38473 Add item type and Shelving location -->
-        <xsl:if test="marc:datafield[@tag=942]/marc:subfield[@code='c'] or marc:datafield[@tag=952]/marc:subfield[@code='c']">
-            <xsl:if test="marc:datafield[@tag=942]/marc:subfield[@code='c']">
+        <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8'] or items:itemcallnumber">
+            <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8']">
                 <span class="results_summary diss_note">
-                    <span class="label">Item Type: </span>
-                    <xsl:value-of select="marc:datafield[@tag=942]/marc:subfield[@code='c']"/>
+                    <span class="label">Collection: </span>
+                    <xsl:for-each select="marc:datafield[@tag=952]/marc:subfield[@code='8']">
+                        <xsl:value-of select="."/>  
+                        <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>                        
+                    </xsl:for-each>
                 </span>                
             </xsl:if>
-            <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='c']">
+            <xsl:if test="items:itemcallnumber">
                 <span class="results_summary diss_note">
-                    <span class="label">Shelving Location: </span>
-                    <xsl:value-of select="marc:datafield[@tag=952]/marc:subfield[@code='c']"/>
+                    <span class="LabelCallNumber">Call number: </span><xsl:value-of select="items:itemcallnumber"/>
+                    <span class="label">Call number: </span>
+                    <xsl:for-each select="items:itemcallnumber">
+                        <xsl:value-of select="."/> 
+                        <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>                        
+                    </xsl:for-each>
                 </span>                
             </xsl:if>
         </xsl:if>
