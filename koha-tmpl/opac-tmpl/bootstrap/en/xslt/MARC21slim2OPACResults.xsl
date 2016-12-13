@@ -10,6 +10,7 @@
     <xsl:import href="MARC21slimUtils.xsl"/>
     <xsl:output method = "html" indent="yes" omit-xml-declaration = "yes" encoding="UTF-8"/>
     <xsl:key name="item-by-status" match="items:item" use="items:status"/>
+    <xsl:key name="collection-code" match="marc:datafield[@tag=952]/marc:subfield[@code='8']" use="."/>
     <xsl:key name="item-by-status-and-branch-home" match="items:item" use="concat(items:status, ' ', items:homebranch)"/>
     <xsl:key name="item-by-status-and-branch-holding" match="items:item" use="concat(items:status, ' ', items:holdingbranch)"/>
 
@@ -577,8 +578,22 @@
         <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8'] or items:itemcallnumber">
             <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8']">
                 <span class="results_summary diss_note">
-                    <span class="label">Collection: </span>
-                        <xsl:value-of select="marc:datafield[@tag=952]/marc:subfield[@code='8'][1]"/>                    
+                    <span class="label">Collection:</span>
+                    <xsl:for-each select="marc:datafield[@tag=952]/marc:subfield[@code='8'][count(. | key('collection-code', .)[1]) = 1]">
+                        <xsl:variable name="current-grouping-key" select="."/>
+                        <xsl:variable name="current-group" select="key('collection-code', $current-grouping-key)"/>
+                        <xsl:for-each select="$current-grouping-key">
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="."/>
+                            <xsl:if test="count($current-group) &gt; 1">
+                                <xsl:text> [</xsl:text>
+                                <xsl:value-of select="count($current-group)"/>
+                                <xsl:text>]</xsl:text>                                
+                            </xsl:if>
+                        </xsl:for-each>
+                        <xsl:if test="position() != last()">, </xsl:if>
+                    </xsl:for-each> 
+                        <!--<xsl:value-of select="marc:datafield[@tag=952]/marc:subfield[@code='8'][1]"/>-->                    
                 </span>                
             </xsl:if>
             <xsl:if test="items:itemcallnumber">
