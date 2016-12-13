@@ -577,7 +577,7 @@
         <!-- #38473 Add item type and Shelving location -->
         <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8'] or items:itemcallnumber">
             <xsl:if test="marc:datafield[@tag=952]/marc:subfield[@code='8']">
-                <span class="results_summary diss_note">
+                <span class="results_summary collection_note">
                     <span class="label">Collection:</span>
                     <xsl:for-each select="marc:datafield[@tag=952]/marc:subfield[@code='8'][count(. | key('collection-code', .)[1]) = 1]">
                         <xsl:variable name="current-grouping-key" select="."/>
@@ -587,8 +587,7 @@
                             <xsl:value-of select="."/>
                                 <xsl:text> [</xsl:text>
                                 <xsl:value-of select="count($current-group)"/>
-                                <xsl:text> item(s)]</xsl:text>                                
-                            
+                                <xsl:text> item(s)]</xsl:text>                                         
                         </xsl:for-each>
                         <xsl:if test="position() != last()">, </xsl:if>
                     </xsl:for-each> 
@@ -596,7 +595,7 @@
                 </span>                
             </xsl:if>
             <xsl:if test="items:itemcallnumber">
-                <span class="results_summary diss_note">
+                <span class="results_summary call_number_note">
                     <span class="LabelCallNumber">Call number: </span><xsl:value-of select="items:itemcallnumber[1]"/>
                 </span>                
             </xsl:if>
