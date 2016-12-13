@@ -585,11 +585,10 @@
                         <xsl:for-each select="$current-grouping-key">
                             <xsl:text> </xsl:text>
                             <xsl:value-of select="."/>
-                            <xsl:if test="count($current-group) &gt; 1">
                                 <xsl:text> [</xsl:text>
                                 <xsl:value-of select="count($current-group)"/>
-                                <xsl:text>]</xsl:text>                                
-                            </xsl:if>
+                                <xsl:text> item(s)]</xsl:text>                                
+                            
                         </xsl:for-each>
                         <xsl:if test="position() != last()">, </xsl:if>
                     </xsl:for-each> 
