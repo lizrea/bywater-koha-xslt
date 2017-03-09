@@ -11,9 +11,12 @@ my $repo =
 
 my $confirm;
 my $verbose;
+my $force_koha_version;
+
 GetOptions(
     "c|confirm" => \$confirm,
     "v|verbose" => \$verbose,
+    "version:s"   => \$force_koha_version,
 );
 
 $verbose = 1 unless $confirm;
@@ -24,6 +27,7 @@ my ($shortname) = split( '-', $ENV{LOGNAME} || $ENV{USERNAME} || $ENV{USER} );
 say "SHORTNAME: $shortname" if $verbose;
 my ( $major, $minor ) = split( '\.', Koha::version() );
 my $version = "v$major.$minor";
+$version = $force_koha_version if $force_koha_version;
 say "VERSION: $version" if $verbose;
 
 my @dirs = (
