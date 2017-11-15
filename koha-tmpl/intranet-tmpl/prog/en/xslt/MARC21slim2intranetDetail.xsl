@@ -118,8 +118,10 @@
                     </xsl:call-template>
                     <xsl:text> </xsl:text>
                     <!-- 13381 add additional subfields-->
-                    <xsl:for-each select="marc:subfield[contains('bchknps', @code)]">
-                        <xsl:choose>
+                    <xsl:for-each select="marc:subfield[contains('bcfhknps', @code)]">
+                    <!--#42221 add subfield F to 245 -->
+                    <span id="subfieldf"> <xsl:value-of select="marc:subfield[@code='f']"/></span>
+                    <xsl:choose>
                             <xsl:when test="@code='h'">
                                 <!--  13381 Span class around subfield h so it can be suppressed via css -->
                                 <span class="title_medium"><xsl:apply-templates/> <xsl:text> </xsl:text> </span>
@@ -355,7 +357,22 @@
                 </span>
             </xsl:when>
         </xsl:choose>
-
+<!-- #21761 added 752$d -->    
+       <xsl:if test="marc:datafield[@tag=752][marc:subfield[@code='d']]">
+            <span class="results_summary publisher"><span class="label">Place: </span>
+                <xsl:for-each select="marc:datafield[@tag=752]">
+                    <span property="location">
+                        <xsl:call-template name="chopPunctuation">
+                            <xsl:with-param name="chopString">
+                                <xsl:call-template name="subfieldSelect">
+                                    <xsl:with-param name="codes">d</xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </span>
+                </xsl:for-each>
+            </span>
+        </xsl:if>
         <!-- Edition Statement: Alternate Graphic Representation (MARC 880) -->
         <xsl:if test="$display880">
             <xsl:call-template name="m880Select">
@@ -365,7 +382,7 @@
                 <xsl:with-param name="label">Edition: </xsl:with-param>
             </xsl:call-template>
         </xsl:if>
-        
+
         <xsl:if test="marc:datafield[@tag=250]">
         <span class="results_summary edition"><span class="label">Edition: </span>
             <xsl:for-each select="marc:datafield[@tag=250]">
@@ -446,7 +463,22 @@
             </span>
         </xsl:if>
 
-
+<!-- 900a Library has: data added by EV per ticket 19957 -->
+        <xsl:if test="marc:datafield[@tag=900]">
+            <span class="results_summary series"><span class="label">Library has: </span>
+                <xsl:for-each select="marc:datafield[@tag=900]">
+                    <xsl:call-template name="chopPunctuation">
+                        <xsl:with-param name="chopString">
+                            <xsl:call-template name="subfieldSelect">
+                                <xsl:with-param name="codes">ab</xsl:with-param>
+                            </xsl:call-template>
+                        </xsl:with-param>
+                   </xsl:call-template>
+                    <xsl:choose><xsl:when test="position()=last()"><xsl:text>.</xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
+                </xsl:for-each>
+            </span>
+       </xsl:if>
+        <!-- End 900a data -->
         <!-- Build ISBN -->
         <xsl:if test="marc:datafield[@tag=020]/marc:subfield[@code='a']">
           <span class="results_summary isbn"><span class="label">ISBN: </span>
