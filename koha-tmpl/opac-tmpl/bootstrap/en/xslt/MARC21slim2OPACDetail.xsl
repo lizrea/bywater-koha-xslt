@@ -419,8 +419,8 @@
             </xsl:call-template>
         </xsl:if>
 
-        <xsl:if test="marc:datafield[@tag=300]">
-        <span class="results_summary description"><span class="label">Description: </span>
+	<!--        <xsl:if test="marc:datafield[@tag=300]">
+        <span class="results_summary description"><span class="label">Pages: </span>
             <xsl:for-each select="marc:datafield[@tag=300]">
                 <span property="description">
                 <xsl:call-template name="chopPunctuation">
@@ -434,7 +434,7 @@
                     <xsl:choose><xsl:when test="position()=last()"><xsl:text>.</xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
             </xsl:for-each>
         </span>
-       </xsl:if>
+       </xsl:if> -->
 
 
             <!-- Content Type -->
@@ -1086,6 +1086,23 @@
         </xsl:if>
         </xsl:for-each>
         </xsl:if>
+
+        <xsl:if test="marc:datafield[@tag=300]">
+        <span class="results_summary description"><span class="label">Pages: </span>
+            <xsl:for-each select="marc:datafield[@tag=300]">
+                <span property="description">
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:call-template name="subfieldSelect">
+                        <xsl:with-param name="codes">abcefg</xsl:with-param>
+                    </xsl:call-template>
+                   </xsl:with-param>
+               </xsl:call-template>
+                </span>
+                    <xsl:choose><xsl:when test="position()=last()"><xsl:text>.</xsl:text></xsl:when><xsl:otherwise><xsl:text>; </xsl:text></xsl:otherwise></xsl:choose>
+            </xsl:for-each>
+        </span>
+       </xsl:if>
 
         <xsl:for-each select="marc:datafield[@tag=511]">
             <span class="results_summary perf_note">
